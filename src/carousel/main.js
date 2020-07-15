@@ -26,6 +26,7 @@ class Carousel {
 		</div>;
 		
 		let position = 0;
+		let timer;  // 用于记录 settimeout 的 id，以便可以 clear
 		
 		let nextPic = () => {
 			let nextPosition = (position + 1) % this.data.length;
@@ -47,62 +48,64 @@ class Carousel {
 				position = nextPosition;
 			}, 16);  // 16ms 正好是一帧 1000 / 60 ~= 16
 			
-			setTimeout(nextPic, 3000)
+			timer = setTimeout(nextPic, 3000)
 		};
 		
-		setTimeout(nextPic, 3000);
 		
+		root.addEventListener('mousedown', event => {
+			clearTimeout(timer);
+			let startX = event.clientX, startY = event.clientY;
+
+			let nextPosition = (position + 1) % this.data.length;
+			let lastPosition = (position - 1 + this.data.length) % this.data.length;
+
+			let current = children[position];
+			let last = children[lastPosition];
+			let next = children[nextPosition];
+
+			current.style.transition = 'ease 0s';
+			last.style.transition = 'ease 0s';
+			next.style.transition = 'ease 0s';
+
+			current.style.transform = `translateX(${-500 * position}px)`;
+			last.style.transform = `translateX(${-500 - 500 * lastPosition}px)`;
+			next.style.transform = `translateX(${500 - 500 * nextPosition}px)`;
+
+			let move = event => {
+				current.style.transform = `translateX(${event.clientX - startX - 500 * position}px)`;
+				last.style.transform = `translateX(${event.clientX - startX - 500 - 500 * lastPosition}px)`;
+				next.style.transform = `translateX(${event.clientX - startX + 500 - 500 * nextPosition}px)`;
+			};
+
+			let up = event => {
+				let offset = 0;
+				if(event.clientX - startX > 250) {  // 终点大于起点坐标，向右滑动，偏移量为正向
+					offset = 1
+				} else if(event.clientX - startX < -250) {  // 终点小于起点坐标，向左滑动， 偏移量为反向
+					offset = -1
+				}
+				
+				current.style.transition = '';
+				last.style.transition = '';
+				next.style.transition = '';
+
+				current.style.transform = `translateX(${offset * 500 -500 * position}px)`;
+				last.style.transform = `translateX(${offset * 500 -500 - 500 * lastPosition}px)`;
+				next.style.transform = `translateX(${offset * 500 + 500 - 500 * nextPosition}px)`;
+
+				position = (position - offset + this.data.length) % this.data.length;
+				
+				timer = setTimeout(nextPic, 3000);  // 记录ID 防止辆续多次滑动轮播图
+				
+				document.removeEventListener('mousemove', move);
+				document.removeEventListener('mouseup', up)
+			};
+
+			document.addEventListener('mousemove', move);
+			document.addEventListener('mouseup', up)
+		});
 		
-		// this.root.addEventListener('mousedown', event => {
-		// 	let startX = event.clientX, startY = event.clientY;
-		//
-		// 	let nextPosition = (position + 1) % this.data.length;
-		// 	let lastPosition = (position - 1 + this.data.length) % this.data.length;
-		//
-		// 	let current = this.root.childNodes[position];
-		// 	let last = this.root.childNodes[lastPosition];
-		// 	let next = this.root.childNodes[nextPosition];
-		//
-		// 	current.style.transition = 'ease 0s';
-		// 	last.style.transition = 'ease 0s';
-		// 	next.style.transition = 'ease 0s';
-		//
-		// 	current.style.transform = `translateX(${-500 * position}px)`;
-		// 	last.style.transform = `translateX(${-500 - 500 * lastPosition}px)`;
-		// 	next.style.transform = `translateX(${500 - 500 * nextPosition}px)`;
-		//
-		// 	let move = event => {
-		// 		current.style.transform = `translateX(${event.clientX - startX - 500 * position}px)`;
-		// 		last.style.transform = `translateX(${event.clientX - startX - 500 - 500 * lastPosition}px)`;
-		// 		next.style.transform = `translateX(${event.clientX - startX + 500 - 500 * nextPosition}px)`;
-		// 	};
-		//
-		// 	let up = event => {
-		// 		let offset = 0;
-		// 		if(event.clientX - startX > 250) {  // 终点大于起点坐标，向右滑动，偏移量为正向
-		// 			offset = 1
-		// 		} else if(event.clientX - startX < -250) {  // 终点小于起点坐标，向左滑动， 偏移量为反向
-		// 			offset = -1
-		// 		}
-		// 		console.log()
-		// 		current.style.transition = '';
-		// 		last.style.transition = '';
-		// 		next.style.transition = '';
-		//
-		// 		current.style.transform = `translateX(${offset * 500 -500 * position}px)`;
-		// 		last.style.transform = `translateX(${offset * 500 -500 - 500 * lastPosition}px)`;
-		// 		next.style.transform = `translateX(${offset * 500 + 500 - 500 * nextPosition}px)`;
-		//
-		// 		position = (position - offset + this.data.length) % this.data.length;
-		//
-		// 		document.removeEventListener('mousemove', move);
-		// 		document.removeEventListener('mouseup', up)
-		// 	};
-		//
-		// 	document.addEventListener('mousemove', move);
-		// 	document.addEventListener('mouseup', up)
-		// })
-		//
+		timer = setTimeout(nextPic, 3000);  // 记录刚开始的定时器ID，以便销毁，防止在刚进入页面时在函数执行之前 鼠标滑动图片，导致又开启一个 定时器
 		
 		
 		return root;

@@ -51,6 +51,7 @@
             }
 
             let position = 0;
+            let timer;  // 用于记录 settimeout 的 id，以便可以 clear
 
             let nextPic = () => {
             	let nextPosition = (position + 1) % this.data.length;
@@ -82,11 +83,12 @@
 					position = nextPosition;
 				}, 16);  // 16ms 正好是一帧 1000 / 60 ~= 16
 
-
-            	setTimeout(nextPic, 3000)
+            	timer = setTimeout(nextPic, 3000);  // 记录当前定时器的 ID
             };
 
 			this.root.addEventListener('mousedown', event => {
+				clearTimeout(timer);  // 在按下鼠标时，销毁定时器
+
 				let startX = event.clientX, startY = event.clientY;
 
 				let nextPosition = (position + 1) % this.data.length;
@@ -117,7 +119,7 @@
 					} else if(event.clientX - startX < -250) {  // 终点小于起点坐标，向左滑动， 偏移量为反向
 						offset = -1
 					}
-                    console.log()
+
 					current.style.transition = '';
 					last.style.transition = '';
 					next.style.transition = '';
@@ -128,15 +130,17 @@
 
 					position = (position - offset + this.data.length) % this.data.length;
 
+					timer = setTimeout(nextPic, 3000);   // 记录ID 防止辆续多次滑动轮播图
+
 					document.removeEventListener('mousemove', move);
 					document.removeEventListener('mouseup', up)
 				};
 
 				document.addEventListener('mousemove', move);
 				document.addEventListener('mouseup', up)
-			})
+			});
 
-			// setTimeout(nextPic, 3000)
+			timer = setTimeout(nextPic, 3000);  // 记录刚开始的定时器ID，以便销毁，防止在刚进入页面时在函数执行之前 鼠标滑动图片，导致又开启一个 定时器
         }
     }
 
