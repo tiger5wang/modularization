@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>carousel</title>
+    <style>
+        .carousel {
+            width: 500px;
+            height: 300px;
+            outline: 1px solid blue;
+            white-space: nowrap;
+            /*margin: auto;*/
+            zoom: 0.5;
+            /*overflow: hidden;*/
+        }
+        .carousel>img {
+            width: 500px;
+            height: 300px;
+            display: inline-block;
+            transition: transform ease 1s;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+
+<script>
+    let container = document.getElementById('container');
+    let imgData = [
+		"https://static001.geekbang.org/resource/image/bb/21/bb38fb7c1073eaee1755f81131f11d21.jpg",
+		"https://static001.geekbang.org/resource/image/1b/21/1b809d9a2bdf3ecc481322d7c9223c21.jpg",
+		"https://static001.geekbang.org/resource/image/b6/4f/b6d65b2f12646a9fd6b8cb2b020d754f.jpg",
+		"https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg",
+	];
+
+    class Carousel {
+    	constructor() {
+    		this.data = null;
+    		this.root = null;
+        }
+
+        render() {
+    		this.root = document.createElement('div');
+    		this.root.classList.add('carousel');
+
+            for (let url of this.data) {
+    			let carouselImg = document.createElement('img');
+                carouselImg.addEventListener('dragstart', event => event.preventDefault());
+    			carouselImg.src = url;
+                this.root.appendChild(carouselImg)
+            }
+
+            let position = 0;  // 记录当前播放图片的索引
+
+            // 轮播的思路是 将按顺序紧邻的两个图片作为整体移动一个图片的距离，而不是将所有的图片整体移动
+            let nextPic = () => {
+            	let nextPosition = (position + 1) % this.data.length;
+
+            	let current = this.root.childNodes[position];  // 当前节点元素
+            	let next = this.root.childNodes[nextPosition];  // 下一个节点元素
+
+                // 下面四行是先将 顺序上紧邻的两张图片放到对应的位置上，并且不能有动画效果
+                current.style.transition = 'ease 0s';
+                next.style.transition = 'ease 0s';
+                current.style.transform = `translateX(${- 100 * position}%)`;
+                next.style.transform = `translateX(${100 - 100 * nextPosition}%)`;
+
+                // 滑动图片动画
+                setTimeout(function () {
+					current.style.transition = '';  // ='' 这个表示用 CSS Rule 中的样式
+					next.style.transition = '';
+					current.style.transform = `translateX(${-100 - 100 * position}%)`;
+					next.style.transform = `translateX(${- 100 * nextPosition}%)`;
+
+					position = nextPosition;
+				}, 16);  // 16ms 表示一帧的时间
+
+                setTimeout(nextPic, 3000)
+            };
+
+
+			// setTimeout(nextPic, 3000)
+        }
+    }
+
+    let carousel = new Carousel();
+    carousel.data = imgData;
+    carousel.render();
+
+    container.appendChild(carousel.root)
+</script>
+</body>
+</html>
