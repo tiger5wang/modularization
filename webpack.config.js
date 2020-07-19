@@ -1,7 +1,7 @@
-const path = require('path')
+const path = require('path');
 
 module.exports = {
-	entry: './src/carousel/main.js',
+	entry: './src/animation/animation.js',
 	mode: 'development',
 	optimization: {
 		minimize: false
@@ -17,7 +17,13 @@ module.exports = {
 						plugins: [['@babel/plugin-transform-react-jsx', {pragma: 'createElement'}]]
 					}
 				}
-			}
+			},
+            {
+                test: /\.vueee/,
+                use:{
+                    loader: require.resolve("./src/2_sfc/myloader.js")
+                }
+            }
 		]
 		
 	}
