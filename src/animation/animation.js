@@ -13,7 +13,7 @@ export class Timeline {
         for (let animation of this.animations) {
 
             let {object, property, start, end, timingFunction, delay, template, duration, addTime} = animation;
-            console.log(addTime, t - delay - addTime)
+            // console.log(addTime, t - delay - addTime)
             let progression = timingFunction((t - delay - addTime)/duration);  // 0-1 之间的数
 
             if (t > duration + delay + addTime) {
@@ -73,7 +73,7 @@ export class Timeline {
         this.animations.push(animation);
         animation.finished = false;
         if (this.status === 'playing') {
-            console.log('----------------------',addTime, Date.now()-this.startTime)
+            // console.log('----------------------',addTime, Date.now()-this.startTime)
             animation.addTime = addTime !== undefined ? addTime : Date.now()-this.startTime;
         } else {
             animation.addTime = addTime !== undefined ? addTime : 0

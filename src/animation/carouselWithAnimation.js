@@ -128,17 +128,53 @@ component.mountTo(document.body);
 
 let linear = t => t;
 let ease = cubicBezier(.25,.1,.25,1);
-let timeline = new Timeline();
+let tl1 = new Timeline();
+let tl2 = new Timeline();
+let tl3 = new Timeline();
+let tl4 = new Timeline();
 
 let el0 = document.getElementById('el0');
 let el1 = document.getElementById('el1');
 let el2 = document.getElementById('el2');
 let el3 = document.getElementById('el3');
 
-timeline.add(new Animation(el0.style,  'transform', 0, -500, 1000, 0, ease, v => `translateX(${v}px)`))
-timeline.add(new Animation(el1.style,  'transform', 0, -500, 1000, 0, ease, v => `translateX(${v}px)`))
 
-timeline.tick()
+tl1.add(new Animation(el0.style,  'transform', 0, -500, 1000, 0, ease, v => `translateX(${v}px)`))
+tl1.add(new Animation(el1.style,  'transform', 0, -500, 1000, 0, ease, v => `translateX(${v}px)`))
+
+tl2.add(new Animation(el1.style,  'transform', -500, -500*2, 1000, 0, ease, v => `translateX(${v}px)`))
+tl2.add(new Animation(el2.style,  'transform', -500, -500*2, 1000, 0, ease, v => `translateX(${v}px)`))
+
+tl3.add(new Animation(el2.style,  'transform', -500*2, -500*3, 1000, 0, ease, v => `translateX(${v}px)`))
+tl3.add(new Animation(el3.style,  'transform', -500*2, -500*3, 1000, 0, ease, v => `translateX(${v}px)`))
+
+tl4.add(new Animation(el3.style,  'transform', -500*3, -500*4, 1000, 0, ease, v => `translateX(${v}px)`))
+tl4.add(new Animation(el0.style,  'transform', 500, 0, 1000, 0, ease, v => `translateX(${v}px)`))
+
+
+function action() {
+	setTimeout(() => {
+			tl1.restart();
+			setTimeout(() => {
+					tl2.restart();
+					setTimeout(() => {
+						tl3.restart();
+						setTimeout(() => {
+							tl4.restart();
+							action()
+						}, 3000)
+					}, 3000)
+				},
+				3000)
+		},
+		3000);
+}
+action();
+
+
+
+// setTimeout(() => tl1.tick(), 3000)
+// setInterval(() => {tl1.restart(); position = (position+1) % 4}, 3000);
 
 // jsx 的写法转义成 js 语法
 // var component = createElement(
