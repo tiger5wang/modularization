@@ -1,7 +1,9 @@
-var parser = require('./parser')
+var parser = require('./parser');
 
-module.exports = function(source, map) {
-    let tree = parser.parseHTML(source)
+// source 参数表示接收的要编译的代码内容
+module.exports = function(source) {
+    // console.log(source)
+    let tree = parser.parseHTML(source);
     // console.log(tree.children[1].children[0].content);
 
     let template = null;
@@ -49,8 +51,11 @@ export class Carousel {
 };
 
 
-
+// step 1
+// source 参数表示接收的要编译的代码内容
 // module.exports = function (source) {
+        // console.log(source)
+        // this.resourcePath 表示当前文件的路径
 //     console.log('myloader is running!!!!!!!!!!!!!!!!!!!\n', this.resourcePath);
 //     let tree = parser.parseHTML(source);
 //     console.log(tree.children[1].children[0].content)

@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-	entry: './src/animation/carouselWithAnimation.js',
+	entry: './src/2_sfc/main.js',  //'./src/animation/carouselWithAnimation.js',
 	mode: 'development',
 	optimization: {
 		minimize: false
