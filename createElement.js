@@ -1,3 +1,6 @@
+import {enableGesture} from './src/5_carouselWithLifecycle/gesture'
+
+
 export function createElement(comp, attributes, ...children) {
 	// console.log(arguments);
 	// // debugger;
@@ -42,7 +45,15 @@ export class Wrapper {
 	
 	setAttribute(name, value) {   // attribute
 		// console.log('MyComponent::setAttribute', name, value);
-		this.root.setAttribute(name, value)
+		this.root.setAttribute(name, value);
+
+        if (name.match(/^on([\s\S]+)$/)) {
+            let eventName = RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase());
+            this.addEventListener(eventName, value)
+        }
+
+        if (name === 'enableGesture')
+            enableGesture(this.root)
 	}
 	
 	appendChild(child) {   // 添加children 的方法一
