@@ -69,7 +69,7 @@ export class Timeline {
         this.status = 'playing';  // 改状态
         this.startTime = Date.now();  // 记录开始时间
         this.pauseTime = null;
-console.log(this.animations.size)
+
         this.tick();
     }
     // 重置
@@ -87,11 +87,10 @@ console.log(this.animations.size)
     }
     // 暂停方法
     pause() {
-        console.log('---------------------------')
         // 动画执行过程中才能只能暂停动作
         if (this.status !== 'playing')
             return;
-        console.log('====================')
+
         this.status = 'pause';
         this.pauseTime = Date.now();  // 记录暂停时的时间，便于继续的时候计算时间差值
         if (this.requestId != null) {// 清楚动画 id

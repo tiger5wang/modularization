@@ -1,12 +1,12 @@
 
 
-export function enableGesture(body) {
+export function enableGesture(element) {
     let contexts = Object.create(null);
     let MOUSE_SYMBOL = Symbol('mouse');
 
 // document.ontouchstart  移动端为 null， PC 端为 undefined
     if (document.ontouchstart !== null) {  // 去掉移动端的 mouse 事件
-        body.addEventListener('mousedown', () => {
+        element.addEventListener('mousedown', () => {
             contexts[MOUSE_SYMBOL] = Object.create(null);
             start(event, contexts[MOUSE_SYMBOL]);
 
@@ -25,27 +25,27 @@ export function enableGesture(body) {
     }
 
 
-    body.addEventListener('touchstart', event => {
+    element.addEventListener('touchstart', event => {
         for (let touch of event.changedTouches) {
             contexts[touch.identifier] = Object.create(null);
             start(touch, contexts[touch.identifier])
         }
     });
 
-    body.addEventListener('touchmove', event => {
+    element.addEventListener('touchmove', event => {
         for (let touch of event.changedTouches) {
             move(touch, contexts[touch.identifier])
         }
     });
 
-    body.addEventListener('touchend', event => {
+    element.addEventListener('touchend', event => {
         for (let touch of event.changedTouches) {
             end(touch, contexts[touch.identifier]);
             delete contexts[touch.identifier]
         }
     });
 
-    body.addEventListener('touchcancel', event => {
+    element.addEventListener('touchcancel', event => {
         for (let touch of event.changedTouches) {
             cancel(touch, contexts[touch.identifier])
             delete contexts[touch.identifier]
@@ -54,14 +54,14 @@ export function enableGesture(body) {
 
     let start = (point, context) => {
         // 派发事件
-        let dispatch = new CustomEvent('start', );
+        let dispatch = new CustomEvent('start');
         Object.assign(dispatch, {
             startX: point.clientX,
             startY: point.clientY,
             pointX: point.clientX,
             pointY: point.clientY
         });
-        document.dispatchEvent(dispatch);
+        element.dispatchEvent(dispatch);
 
         context.startX = point.clientX; context.startY = point.clientY;
         context.moves = [];
@@ -77,14 +77,14 @@ export function enableGesture(body) {
             context.isPan = false;
             context.isPress = true;
             // 派发事件
-            let dispatch = new CustomEvent('press-start', );
+            let dispatch = new CustomEvent('pressstart');
             Object.assign(dispatch, {
                 startX: point.clientX,
                 startY: point.clientY,
                 pointX: point.clientX,
                 pointY: point.clientY
             });
-            document.dispatchEvent(dispatch);
+            element.dispatchEvent(dispatch);
         }, 500)
 
     };
@@ -98,14 +98,14 @@ export function enableGesture(body) {
             context.isPan = true;
             context.isPress = false;
             // 派发事件
-            let dispatch = new CustomEvent('pan-start', );
+            let dispatch = new CustomEvent('panstart');
             Object.assign(dispatch, {
                 startX: context.startX,
                 startY: context.startY,
                 pointX: point.clientX,
                 pointY: point.clientY
             });
-            document.dispatchEvent(dispatch)
+            element.dispatchEvent(dispatch)
         }
         if (context.isPan) {
             context.moves.push({
@@ -114,14 +114,14 @@ export function enableGesture(body) {
             // 过滤出最后 300ms 的move 事项
             context.moves = context.moves.filter(move => Date.now() - move.t < 300);
             // 派发事件
-            let dispatch = new CustomEvent('pan-move', );
+            let dispatch = new CustomEvent('panmove');
             Object.assign(dispatch, {
                 startX: context.startX,
                 startY: context.startY,
                 pointX: point.clientX,
                 pointY: point.clientY
             });
-            document.dispatchEvent(dispatch)
+            element.dispatchEvent(dispatch)
         }
     }
 
@@ -139,7 +139,7 @@ export function enableGesture(body) {
             let isFlick = speed > 2.5;  // 速度大于 2.5 触发 flick
             if (isFlick) {
                 // 派发事件
-                let dispatch = new CustomEvent('flick', );
+                let dispatch = new CustomEvent('flick');
                 Object.assign(dispatch, {
                     startX: context.startX,
                     startY: context.startY,
@@ -147,11 +147,11 @@ export function enableGesture(body) {
                     pointY: point.clientY,
                     speed
                 });
-                document.dispatchEvent(dispatch)
+                element.dispatchEvent(dispatch)
             }
 
             // 派发事件
-            let dispatch = new CustomEvent('pan-end', );
+            let dispatch = new CustomEvent('panend');
             Object.assign(dispatch, {
                 startX: context.startX,
                 startY: context.startY,
@@ -160,24 +160,24 @@ export function enableGesture(body) {
                 speed,
                 isFlick
             });
-            document.dispatchEvent(dispatch)
+            element.dispatchEvent(dispatch)
         }
 
         if (context.isTap) {
             // 派发事件
-            document.dispatchEvent(new CustomEvent('tap', {}))
+            element.dispatchEvent(new CustomEvent('tap', {}))
         }
 
         if (context.isPress) {
             // 派发事件
-            let dispatch = new CustomEvent('press-end', );
+            let dispatch = new CustomEvent('pressend' );
             Object.assign(dispatch, {
                 startX: context.startX,
                 startY: context.startY,
                 pointX: point.clientX,
                 pointY: point.clientY
             });
-            document.dispatchEvent(dispatch)
+            element.dispatchEvent(dispatch)
         }
         // 清除定时器
         clearTimeout(context.timeoutHandler)

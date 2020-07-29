@@ -49,11 +49,13 @@ export class Wrapper {
 
         if (name.match(/^on([\s\S]+)$/)) {
             let eventName = RegExp.$1.replace(/^[\s\S]/, c => c.toLowerCase());
-            this.addEventListener(eventName, value)
+            this.root.addEventListener(eventName, value)
         }
 
-        if (name === 'enableGesture')
+        if (name === 'enableGesture') {
             enableGesture(this.root)
+        }
+
 	}
 	
 	appendChild(child) {   // 添加children 的方法一
