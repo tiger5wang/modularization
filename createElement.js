@@ -82,10 +82,6 @@ export class Wrapper {
 		return this.root.style;
 	}
 
-	set innerText(text) {
-
-    }
-
 	mountTo(parent) {
 		parent.appendChild(this.root);
 		
