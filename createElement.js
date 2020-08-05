@@ -42,7 +42,7 @@ export class Wrapper {
 		this.children = [];
 		this.root = document.createElement(type)
 	}
-	
+
 	setAttribute(name, value) {   // attribute
 		// console.log('MyComponent::setAttribute', name, value);
 		this.root.setAttribute(name, value);
@@ -61,15 +61,15 @@ export class Wrapper {
 	getAttribute(name) {
 		return this.root.getAttribute(name)
 	}
-	
+
 	get classList() {
 		return this.root.classList;
 	}
-	
+
 	set innerText(text) {
 		return this.root.innerText = text;
 	}
-	
+
 	appendChild(child) {   // 添加children 的方法一
 		this.children.push(child)
 	}
@@ -81,7 +81,11 @@ export class Wrapper {
 	get style() {
 		return this.root.style;
 	}
-	
+
+	set innerText(text) {
+
+    }
+
 	mountTo(parent) {
 		parent.appendChild(this.root);
 		
@@ -99,9 +103,9 @@ export class TextNode {
 	mountTo(parent) {
 		parent.appendChild(this.root)
 	}
-	
+
 	getAttribute(name) {
 		return
 	}
-	
+
 }
